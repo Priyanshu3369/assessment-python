@@ -2,6 +2,12 @@
 
 A full-stack application to store and query candidate profile data with a FastAPI backend, React + TailwindCSS frontend, and MongoDB database.
 
+## 🌐 Live Demo
+
+👉 Live Application: https://profile-oragniser.vercel.app/
+
+The demo frontend is deployed on Vercel and connected to the hosted backend APIs.
+
 ## 🎯 Features
 
 - **Profile Management**: Create, read, update, and delete candidate profiles
