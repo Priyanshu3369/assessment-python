@@ -13,7 +13,6 @@ A full-stack application to store and query candidate profile data with a FastAP
 - **Rate Limiting**: 60 requests/minute per IP
 - **Logging**: Structured request/response logging
 - **Tests**: Automated pytest test suite
-- **CI/CD**: GitHub Actions workflow
 
 ## 📋 Resume
 
@@ -50,7 +49,6 @@ A full-stack application to store and query candidate profile data with a FastAP
 - **Frontend**: React 18, Vite, TailwindCSS, React Router
 - **Database**: MongoDB
 - **Testing**: pytest, pytest-asyncio, httpx
-- **CI/CD**: GitHub Actions
 
 ---
 
@@ -251,18 +249,6 @@ pytest tests/test_profile.py
 
 ---
 
-## 🔄 CI/CD
-
-GitHub Actions workflow runs on push/PR to `main`:
-
-1. **Backend Tests**: Runs pytest with MongoDB service
-2. **Frontend Build**: Builds React app
-3. **Lint Check**: Checks Python code formatting
-
-See `.github/workflows/ci.yml` for configuration.
-
----
-
 ## 📁 Project Structure
 
 ```
@@ -288,7 +274,6 @@ assessment-python/
 │   │   ├── main.jsx         # Entry with BrowserRouter
 │   │   └── api/client.js    # API client with auth
 │   └── package.json
-├── .github/workflows/ci.yml  # CI pipeline
 ├── schema.md                 # MongoDB schema
 └── README.md
 ```
@@ -351,7 +336,6 @@ All settings are configurable via environment variables in `backend/.env`:
 - [x] Rate limiting (60 req/min)
 - [x] Pagination on projects and search
 - [x] Pytest test suite
-- [x] GitHub Actions CI
 - [x] React Router with proper URLs
 - [x] Premium UI with TailwindCSS
 
