@@ -71,7 +71,8 @@ SEED_DATA = {
         "Google Colaboratory",
         "VS Code",
         "Firebase",
-        "Cloudinary"
+        "Cloudinary",
+        "Puter.js"
     ],
     "projects": [
         {
@@ -79,7 +80,7 @@ SEED_DATA = {
             "description": "Developed a full-stack AI-powered code review platform that analyzes code for quality, readability, and performance. Integrated Google Gemini API to generate structured, real-time feedback for multiple programming languages. Implemented secure backend with Express and MongoDB for user authentication and code storage.",
             "links": [
                 "https://github.com/Priyanshu3369/CodeSensei",
-                "https://code-sensei.vercel.app"
+                "https://code-sensei-ten.vercel.app/"
             ],
             "skills": ["React", "Node.js", "Express", "MongoDB", "Gemini AI", "Tailwind CSS"]
         },
@@ -87,8 +88,8 @@ SEED_DATA = {
             "title": "Saathi - Mental Wellness Companion",
             "description": "Developed an AI-powered mental health support platform with encrypted diary entries and private conversations. Implemented grounding exercises including breathing techniques and 5-4-3-2-1 grounding exercises for anxiety management. Integrated machine learning for emotion detection and personalized support recommendations.",
             "links": [
-                "https://github.com/Priyanshu3369/Saathi",
-                "https://saathi-wellness.vercel.app"
+                "https://github.com/Priyanshu3369/with-you",
+                "https://with-you-chi.vercel.app/"
             ],
             "skills": ["React", "Node.js", "Machine Learning", "Encryption", "NLP"]
         },
@@ -96,8 +97,8 @@ SEED_DATA = {
             "title": "CV Wizard",
             "description": "Built a fully client-side AI-powered resume analyzer using React, Puter.js, and Tailwind CSS. Integrated seamless resume upload, cloud storage, and modern UI/UX. Implemented in-browser AI feedback to score resumes for ATS compatibility and generate tailored suggestions.",
             "links": [
-                "https://github.com/Priyanshu3369/CV-Wizard",
-                "https://cv-wizard.vercel.app"
+                "https://github.com/Priyanshu3369/cv-wizard",
+                "https://cv-wizard-demo.vercel.app/"
             ],
             "skills": ["React", "TypeScript", "Puter.js", "Tailwind CSS", "AI"]
         },
@@ -105,15 +106,17 @@ SEED_DATA = {
             "title": "Image Augmentation Web App",
             "description": "Developed a tool for automatic/manual image augmentations to boost ML datasets. Enabled downloads of processed datasets with multiple augmentation techniques including rotation, flipping, scaling, and color adjustments.",
             "links": [
-                "https://github.com/Priyanshu3369/image-augmentation",
-                "https://image-augmentation.vercel.app"
+                "https://github.com/Priyanshu3369/image-augmentation-app",
+                "https://image-augmentation-demo.vercel.app/"
             ],
             "skills": ["Machine Learning", "Flask", "JavaScript", "Python", "Computer Vision"]
         },
         {
             "title": "Candidate Profile Playground",
             "description": "Full-stack application to store and query candidate profile data with FastAPI backend, React frontend, and MongoDB database. Implements advanced search, filtering, and data visualization features.",
-            "links": ["https://github.com/Priyanshu3369/assessment-python"],
+            "links": [
+                "https://github.com/Priyanshu3369/assessment-python"
+            ],
             "skills": ["Python", "FastAPI", "React", "MongoDB", "TailwindCSS"]
         }
     ],
@@ -159,7 +162,8 @@ SEED_DATA = {
         "Problem-Solving",
         "Logical & Analytical Thinking",
         "Strong Communication",
-        "Research"
+        "Research",
+        "Analytical Thinking"
     ]
 }
 
