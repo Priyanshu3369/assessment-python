@@ -31,13 +31,9 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add logging middleware (first to log all requests)
-app.add_middleware(LoggingMiddleware)
-
-# Add rate limiting middleware
-app.add_middleware(RateLimitMiddleware)
-
-# Configure CORS
+# Configure CORS (added first so it executes last, after other middleware)
+# Note: Middleware executes in REVERSE order of addition
+# So we add CORS last to ensure it handles preflight requests first
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
@@ -45,6 +41,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add rate limiting middleware
+app.add_middleware(RateLimitMiddleware)
+
+# Add logging middleware (logs all requests)
+app.add_middleware(LoggingMiddleware)
 
 # Include routers
 app.include_router(health.router)
