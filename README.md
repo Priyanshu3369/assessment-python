@@ -16,7 +16,7 @@ A full-stack application to store and query candidate profile data with a FastAP
 
 ## 📋 Resume
 
-**[View My Resume]([https://your-resume-link-here.com](https://drive.google.com/file/d/1sF_j0ZMcEWfyLt2a4ImX0U_Y75kTNk9G/view?usp=sharing))**
+**[View My Resume](https://drive.google.com/file/d/1sF_j0ZMcEWfyLt2a4ImX0U_Y75kTNk9G/view?usp=sharing)**
 
 ---
 
