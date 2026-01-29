@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     app_name: str = "Candidate Profile API"
     mongodb_url: str = "mongodb://localhost:27017"
     database_name: str = "candidate_profile"
-    cors_origins: str = "http://localhost:5173,http://localhost:3000"
+    cors_origins: str = "http://localhost:5173,http://localhost:3000,https://profile-oragniser.vercel.app"
     
     # Auth settings
     admin_username: str = "admin"
