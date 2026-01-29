@@ -31,13 +31,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configure CORS (added first so it executes last, after other middleware)
-# Note: Middleware executes in REVERSE order of addition
-# So we add CORS last to ensure it handles preflight requests first
+# Configure CORS - Allow all origins for now
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
