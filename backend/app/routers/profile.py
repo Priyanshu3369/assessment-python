@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from ..database import get_database
 from ..models import ProfileCreate, ProfileUpdate, ProfileResponse
+from ..auth import require_auth
 from bson import ObjectId
 
 router = APIRouter(prefix="/profile", tags=["profile"])
@@ -34,8 +35,11 @@ async def get_profile():
 
 
 @router.post("", response_model=ProfileResponse, status_code=status.HTTP_201_CREATED)
-async def create_profile(profile: ProfileCreate):
-    """Create a new profile."""
+async def create_profile(profile: ProfileCreate, username: str = Depends(require_auth)):
+    """
+    Create a new profile.
+    Requires HTTP Basic Auth.
+    """
     db = get_database()
     
     # Check if profile already exists
@@ -54,8 +58,11 @@ async def create_profile(profile: ProfileCreate):
 
 
 @router.put("", response_model=ProfileResponse)
-async def update_profile(profile_update: ProfileUpdate):
-    """Update the profile."""
+async def update_profile(profile_update: ProfileUpdate, username: str = Depends(require_auth)):
+    """
+    Update the profile.
+    Requires HTTP Basic Auth.
+    """
     db = get_database()
     
     existing = await db.profiles.find_one()
@@ -78,8 +85,11 @@ async def update_profile(profile_update: ProfileUpdate):
 
 
 @router.delete("", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_profile():
-    """Delete the profile."""
+async def delete_profile(username: str = Depends(require_auth)):
+    """
+    Delete the profile.
+    Requires HTTP Basic Auth.
+    """
     db = get_database()
     
     result = await db.profiles.delete_one({})

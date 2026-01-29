@@ -5,6 +5,8 @@ from contextlib import asynccontextmanager
 from .config import get_settings
 from .database import connect_to_mongo, close_mongo_connection
 from .routers import health, profile, query
+from .logging_config import LoggingMiddleware, logger
+from .rate_limit import RateLimitMiddleware
 
 settings = get_settings()
 
@@ -12,10 +14,14 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    logger.info("🚀 Starting Candidate Profile API...")
     await connect_to_mongo()
+    logger.info("✅ Connected to MongoDB")
     yield
     # Shutdown
+    logger.info("👋 Shutting down API...")
     await close_mongo_connection()
+    logger.info("✅ MongoDB connection closed")
 
 
 app = FastAPI(
@@ -25,10 +31,16 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Add logging middleware (first to log all requests)
+app.add_middleware(LoggingMiddleware)
+
+# Add rate limiting middleware
+app.add_middleware(RateLimitMiddleware)
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -44,6 +56,12 @@ app.include_router(query.router)
 async def root():
     return {
         "message": "Welcome to Candidate Profile API",
+        "version": "1.0.0",
         "docs": "/docs",
-        "health": "/health"
+        "health": "/health",
+        "features": {
+            "auth": "Basic Auth required for POST/PUT/DELETE on /profile",
+            "rate_limit": f"{settings.rate_limit_per_minute} requests/minute",
+            "pagination": "Supported on /projects and /search"
+        }
     }

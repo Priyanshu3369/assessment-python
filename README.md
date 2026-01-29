@@ -4,11 +4,16 @@ A full-stack application to store and query candidate profile data with a FastAP
 
 ## 🎯 Features
 
-- **Profile Management**: Create, read, and update candidate profiles
-- **Project Showcase**: View projects with skill-based filtering
+- **Profile Management**: Create, read, update, and delete candidate profiles
+- **Project Showcase**: View projects with skill-based filtering and pagination
 - **Search**: Full-text search across skills, projects, and work experience
 - **Top Skills**: Ranked skills based on project usage
 - **Health Check**: Liveness endpoint for monitoring
+- **Authentication**: HTTP Basic Auth for write operations
+- **Rate Limiting**: 60 requests/minute per IP
+- **Logging**: Structured request/response logging
+- **Tests**: Automated pytest test suite
+- **CI/CD**: GitHub Actions workflow
 
 ## 📋 Resume
 
@@ -28,17 +33,24 @@ A full-stack application to store and query candidate profile data with a FastAP
 └─────────────────┘     └─────────────────┘     └─────────────────┘
         │                       │
         │                       ▼
-        │               /health
-        │               /profile (CRUD)
-        └──────────────▶/projects?skill=
-                        /skills/top
-                        /search?q=
+        │               Middleware Stack:
+        │               - CORS
+        │               - Rate Limiting
+        │               - Request Logging
+        │               - Basic Auth (write ops)
+        │                       │
+        └──────────────▶ Endpoints:
+                        /health, /profile
+                        /projects, /skills
+                        /search
 ```
 
 ### Tech Stack
 - **Backend**: Python 3.11+, FastAPI, Motor (async MongoDB driver)
-- **Frontend**: React 18, Vite, TailwindCSS
+- **Frontend**: React 18, Vite, TailwindCSS, React Router
 - **Database**: MongoDB
+- **Testing**: pytest, pytest-asyncio, httpx
+- **CI/CD**: GitHub Actions
 
 ---
 
@@ -58,7 +70,6 @@ cd assessment-python
 ### 2. Start MongoDB
 **Option A: Local MongoDB**
 ```bash
-# Start MongoDB service
 mongod --dbpath /path/to/data/db
 ```
 
@@ -103,21 +114,83 @@ Frontend will be available at: http://localhost:5173
 
 ---
 
+## 🔐 Authentication
+
+Write operations (POST, PUT, DELETE on `/profile`) require **HTTP Basic Auth**.
+
+### Default Credentials
+- **Username**: `admin`
+- **Password**: `secret123`
+
+> ⚠️ Change these in `.env` for production!
+
+### Example with curl
+```bash
+# Create/Update profile with auth
+curl -X PUT http://localhost:8000/profile \
+  -u admin:secret123 \
+  -H "Content-Type: application/json" \
+  -d '{"name": "John Doe"}'
+```
+
+---
+
+## 📄 Pagination
+
+`/projects` and `/search` endpoints support pagination:
+
+| Parameter | Default | Max | Description |
+|-----------|---------|-----|-------------|
+| `page` | 1 | - | Page number |
+| `page_size` | 10 | 100 | Items per page |
+
+### Example
+```bash
+curl "http://localhost:8000/projects?page=1&page_size=5"
+```
+
+### Response includes:
+```json
+{
+  "projects": [...],
+  "count": 5,
+  "total": 20,
+  "page": 1,
+  "page_size": 5,
+  "total_pages": 4,
+  "has_next": true,
+  "has_prev": false
+}
+```
+
+---
+
+## ⏱️ Rate Limiting
+
+- **Default**: 60 requests/minute per IP
+- **Headers in response**:
+  - `X-RateLimit-Limit`: Total allowed requests
+  - `X-RateLimit-Remaining`: Remaining requests
+- **Exceeding limit**: Returns `429 Too Many Requests`
+
+---
+
 ## 📖 API Documentation
 
 ### Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/health` | Health check |
-| GET | `/profile` | Get profile |
-| POST | `/profile` | Create profile |
-| PUT | `/profile` | Update profile |
-| GET | `/projects` | List projects |
-| GET | `/projects?skill=python` | Filter by skill |
-| GET | `/skills` | List all skills |
-| GET | `/skills/top` | Get top skills |
-| GET | `/search?q=keyword` | Full-text search |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/health` | No | Health check |
+| GET | `/profile` | No | Get profile |
+| POST | `/profile` | **Yes** | Create profile |
+| PUT | `/profile` | **Yes** | Update profile |
+| DELETE | `/profile` | **Yes** | Delete profile |
+| GET | `/projects` | No | List projects (paginated) |
+| GET | `/projects?skill=python` | No | Filter by skill |
+| GET | `/skills` | No | List all skills |
+| GET | `/skills/top` | No | Get top skills |
+| GET | `/search?q=keyword` | No | Full-text search |
 
 ### Sample curl Commands
 
@@ -125,34 +198,68 @@ Frontend will be available at: http://localhost:5173
 # Health check
 curl http://localhost:8000/health
 
-# Get profile
+# Get profile (no auth needed for GET)
 curl http://localhost:8000/profile
 
-# Get projects filtered by Python skill
+# Get projects with pagination
+curl "http://localhost:8000/projects?page=1&page_size=5"
+
+# Filter projects by skill
 curl "http://localhost:8000/projects?skill=python"
 
 # Get top 5 skills
 curl "http://localhost:8000/skills/top?limit=5"
 
-# Search for "web"
+# Search
 curl "http://localhost:8000/search?q=web"
 
-# Create profile
-curl -X POST http://localhost:8000/profile \
+# Update profile (requires auth)
+curl -X PUT http://localhost:8000/profile \
+  -u admin:secret123 \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "skills": ["Python", "JavaScript"],
-    "projects": [],
-    "education": [],
-    "work": [],
-    "links": {"github": "https://github.com/johndoe"}
-  }'
+  -d '{"skills": ["Python", "FastAPI", "MongoDB"]}'
 ```
 
 ### Swagger UI
-Interactive API docs available at: http://localhost:8000/docs
+Interactive API docs: http://localhost:8000/docs
+
+---
+
+## 🧪 Testing
+
+### Run Tests
+```bash
+cd backend
+
+# Install test dependencies
+pip install pytest pytest-asyncio httpx
+
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run specific test file
+pytest tests/test_profile.py
+```
+
+### Test Coverage
+- `test_health.py`: Health and root endpoints
+- `test_profile.py`: Profile CRUD with auth verification
+- `test_query.py`: Projects, skills, search with pagination
+
+---
+
+## 🔄 CI/CD
+
+GitHub Actions workflow runs on push/PR to `main`:
+
+1. **Backend Tests**: Runs pytest with MongoDB service
+2. **Frontend Build**: Builds React app
+3. **Lint Check**: Checks Python code formatting
+
+See `.github/workflows/ci.yml` for configuration.
 
 ---
 
@@ -162,30 +269,27 @@ Interactive API docs available at: http://localhost:8000/docs
 assessment-python/
 ├── backend/
 │   ├── app/
-│   │   ├── __init__.py
-│   │   ├── main.py          # FastAPI app
-│   │   ├── config.py        # Settings
+│   │   ├── main.py          # FastAPI app with middleware
+│   │   ├── config.py        # Settings (auth, rate limit, etc.)
 │   │   ├── database.py      # MongoDB connection
-│   │   ├── seed.py          # Seed script
-│   │   ├── models/
-│   │   │   └── profile.py   # Pydantic models
-│   │   └── routers/
-│   │       ├── health.py    # /health
-│   │       ├── profile.py   # /profile CRUD
-│   │       └── query.py     # /projects, /skills, /search
+│   │   ├── auth.py          # HTTP Basic Auth
+│   │   ├── logging_config.py # Request logging
+│   │   ├── rate_limit.py    # Rate limiting middleware
+│   │   ├── seed.py          # Database seeding
+│   │   ├── models/          # Pydantic models
+│   │   └── routers/         # API routes
+│   ├── tests/               # Pytest tests
 │   ├── requirements.txt
+│   ├── pyproject.toml       # Pytest config
 │   └── .env.example
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx          # Main component
-│   │   ├── main.jsx         # Entry point
-│   │   ├── index.css        # TailwindCSS
-│   │   └── api/
-│   │       └── client.js    # API client
-│   ├── index.html
-│   ├── vite.config.js
+│   │   ├── App.jsx          # Main component with routing
+│   │   ├── main.jsx         # Entry with BrowserRouter
+│   │   └── api/client.js    # API client with auth
 │   └── package.json
-├── schema.md                 # MongoDB schema docs
+├── .github/workflows/ci.yml  # CI pipeline
+├── schema.md                 # MongoDB schema
 └── README.md
 ```
 
@@ -195,69 +299,61 @@ assessment-python/
 
 See [schema.md](./schema.md) for detailed MongoDB schema documentation.
 
-### Quick Overview
-```json
-{
-  "name": "string",
-  "email": "string (unique)",
-  "education": [{ "degree", "institution", "year" }],
-  "skills": ["string"],
-  "projects": [{ "title", "description", "links", "skills" }],
-  "work": [{ "title", "company", "duration", "description" }],
-  "links": { "github", "linkedin", "portfolio" }
-}
-```
+---
+
+## ⚙️ Configuration
+
+All settings are configurable via environment variables in `backend/.env`:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MONGODB_URL` | `mongodb://localhost:27017` | MongoDB connection string |
+| `DATABASE_NAME` | `candidate_profile` | Database name |
+| `CORS_ORIGINS` | `http://localhost:5173` | Allowed origins (comma-separated) |
+| `ADMIN_USERNAME` | `admin` | Basic Auth username |
+| `ADMIN_PASSWORD` | `secret123` | Basic Auth password |
+| `RATE_LIMIT_PER_MINUTE` | `60` | Rate limit per IP |
+| `DEFAULT_PAGE_SIZE` | `10` | Default pagination size |
+| `MAX_PAGE_SIZE` | `100` | Maximum pagination size |
 
 ---
 
 ## 🚀 Production Deployment
 
-### Backend (e.g., Railway, Render, Fly.io)
+### Backend (Railway, Render, Fly.io)
 
-1. Set environment variables:
-   ```
-   MONGODB_URL=mongodb+srv://...
-   DATABASE_NAME=candidate_profile
-   ```
-
+1. Set environment variables (especially `ADMIN_PASSWORD`!)
 2. Start command:
    ```bash
    uvicorn app.main:app --host 0.0.0.0 --port $PORT
    ```
 
-### Frontend (e.g., Vercel, Netlify)
+### Frontend (Vercel, Netlify)
 
-1. Set environment variable:
+1. Set environment variables:
    ```
    VITE_API_URL=https://your-backend-url.com
+   VITE_AUTH_USERNAME=admin
+   VITE_AUTH_PASSWORD=your-secure-password
    ```
-
-2. Build command:
-   ```bash
-   npm run build
-   ```
-
+2. Build command: `npm run build`
 3. Publish directory: `dist`
 
 ---
 
-## ⚠️ Known Limitations
+## ✅ Feature Checklist
 
-- Single profile support (one candidate per database)
-- No authentication (write operations are public)
-- No pagination on projects/skills lists
-- Search is case-insensitive but requires exact substring match
-
----
-
-## 🔮 Future Improvements
-
-- [ ] Add authentication for write operations
-- [ ] Implement pagination
-- [ ] Add unit and integration tests
-- [ ] Add rate limiting
-- [ ] Add logging and monitoring
-- [ ] Support multiple profiles
+- [x] Profile CRUD endpoints
+- [x] Query endpoints (projects, skills, search)
+- [x] Health check endpoint
+- [x] Basic Auth for write operations
+- [x] Request/Response logging
+- [x] Rate limiting (60 req/min)
+- [x] Pagination on projects and search
+- [x] Pytest test suite
+- [x] GitHub Actions CI
+- [x] React Router with proper URLs
+- [x] Premium UI with TailwindCSS
 
 ---
 

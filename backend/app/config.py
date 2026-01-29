@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
 from functools import lru_cache
 from typing import List
 
@@ -9,6 +8,17 @@ class Settings(BaseSettings):
     mongodb_url: str = "mongodb://localhost:27017"
     database_name: str = "candidate_profile"
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
+    
+    # Auth settings
+    admin_username: str = "admin"
+    admin_password: str = "secret123"
+    
+    # Rate limiting
+    rate_limit_per_minute: int = 60
+    
+    # Pagination defaults
+    default_page_size: int = 10
+    max_page_size: int = 100
 
     @property
     def cors_origins_list(self) -> List[str]:
