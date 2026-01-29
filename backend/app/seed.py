@@ -98,7 +98,7 @@ SEED_DATA = {
             "description": "Built a fully client-side AI-powered resume analyzer using React, Puter.js, and Tailwind CSS. Integrated seamless resume upload, cloud storage, and modern UI/UX. Implemented in-browser AI feedback to score resumes for ATS compatibility and generate tailored suggestions.",
             "links": [
                 "https://github.com/Priyanshu3369/cv-wizard",
-                "https://cv-wizard-demo.vercel.app/"
+                "https://cv-wizard-khaki.vercel.app/"
             ],
             "skills": ["React", "TypeScript", "Puter.js", "Tailwind CSS", "AI"]
         },
@@ -107,7 +107,7 @@ SEED_DATA = {
             "description": "Developed a tool for automatic/manual image augmentations to boost ML datasets. Enabled downloads of processed datasets with multiple augmentation techniques including rotation, flipping, scaling, and color adjustments.",
             "links": [
                 "https://github.com/Priyanshu3369/image-augmentation-app",
-                "https://image-augmentation-demo.vercel.app/"
+                "https://image-augmentation-app-nit0.onrender.com/"
             ],
             "skills": ["Machine Learning", "Flask", "JavaScript", "Python", "Computer Vision"]
         },
@@ -115,7 +115,8 @@ SEED_DATA = {
             "title": "Candidate Profile Playground",
             "description": "Full-stack application to store and query candidate profile data with FastAPI backend, React frontend, and MongoDB database. Implements advanced search, filtering, and data visualization features.",
             "links": [
-                "https://github.com/Priyanshu3369/assessment-python"
+                "https://github.com/Priyanshu3369/assessment-python",
+                "https://profile-oragniser.vercel.app/"
             ],
             "skills": ["Python", "FastAPI", "React", "MongoDB", "TailwindCSS"]
         }
